@@ -9,7 +9,7 @@ let config = {
     autoCenter: true,
     width: 178,
     height: 138,
-    zoom: 5,
+    zoom: 4,
     render: {
         pixelArt: true
     },

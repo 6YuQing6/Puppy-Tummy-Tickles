@@ -5,11 +5,16 @@ class Puppy extends Phaser.Physics.Arcade.Sprite {
         this.scene.physics.add.existing(this);
         this.body.setSize(this.width/5, this.height/10);
         this.body.setOffset(15,35);
+        this.body.onOverlap = true;
         this.setCollideWorldBounds(true);
         this.layDownTime = 3000;
         this.moving = false;
         this.moveTime = 250;
         this.moveToX = 100;
+        this.layingDown = false;
+        this.tickled = false;
+        
+        this.moveSFX = scene.sound.add('puppyMove', {volume: 0.5});
 
         scene.puppyFSM = new StateMachine('walk', {
             stand: new StandState(),
@@ -27,14 +32,16 @@ class Puppy extends Phaser.Physics.Arcade.Sprite {
         if (!(x + 5 > this.x && this.x > x - 5)){
             if (this.x < x && !this.moving){
                 this.x += 5;
-                this.flipX = false;
+                this.moveSFX.play();
+                this.flipSprite(false)
                 this.moving = true;
                 this.scene.time.delayedCall(this.moveTime, () => {
                     this.moving = false;
                 });
             } else if (this.x > x && !this.moving){
                 this.x -= 5;
-                this.flipX = true;
+                this.moveSFX.play();
+                this.flipSprite(true);
                 this.moving = true;
                 this.scene.time.delayedCall(this.moveTime, () => {
                     this.moving = false;
@@ -42,6 +49,15 @@ class Puppy extends Phaser.Physics.Arcade.Sprite {
             }
         } else{
             return true;
+        }
+    }
+    flipSprite(flip){
+        if (flip){
+            this.flipX = true;
+            this.body.setOffset(38,35);
+        } else {
+            this.flipX = false;
+            this.body.setOffset(14,35);
         }
     }
     // timer for when it lays down
@@ -75,9 +91,20 @@ class WalkState extends State {
 class LayDownState extends State {
     enter(scene, puppy){
         puppy.play('puppy_layDown');
+        puppy.layingDown = true;
         scene.time.delayedCall(puppy.layDownTime, () => {
-            this.stateMachine.transition('stand');
-            return;
+            puppy.layingDown = false;
+            if (puppy.tickled == false) {
+                scene.hearts.removeHeart();
+                console.log(scene.hearts.totalHearts());
+                console.log('REMOVE HEART')
+                puppy.play('puppy_sad')
+            }
+            scene.time.delayedCall(1000, () => {
+                puppy.tickled = false;
+                this.stateMachine.transition('stand');
+                return;
+            });
         })
     }
 }

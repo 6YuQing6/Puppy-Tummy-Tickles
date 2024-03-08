@@ -4,11 +4,14 @@ class Hand extends Phaser.Physics.Arcade.Sprite {
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
         this.body.setSize(this.width / 8, this.height / 3);
+        this.body.onOverlap = true;
         this.body.setOffset(29,30);
         //this.setCollideWorldBounds(true);
 
         this.moving = false;
         this.moveLength = 5;
+
+        this.moveSFX = scene.sound.add('handMove', {volume: 0.1});
 
         scene.handFSM = new StateMachine('idle', {
             idle: new IdleState(),
@@ -39,6 +42,7 @@ class MoveState extends State {
         if(left.isDown && !hand.moving && hand.x > 0) {
             hand.x -= hand.moveLength;
             hand.moving = true;
+            hand.moveSFX.play();
             scene.time.delayedCall(80, () => {
                 hand.moving = false;
                 //console.log(hand.x) 
@@ -47,6 +51,7 @@ class MoveState extends State {
         if (right.isDown && !hand.moving && hand.x < 160) {
             hand.x += hand.moveLength;
             hand.moving = true;
+            hand.moveSFX.play();
             scene.time.delayedCall(80, () => {
                 hand.moving = false;
                 //console.log(hand.x)
