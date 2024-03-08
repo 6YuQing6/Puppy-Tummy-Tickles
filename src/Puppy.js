@@ -25,6 +25,10 @@ class Puppy extends Phaser.Physics.Arcade.Sprite {
     happyPet(){
         this.play('puppy_happy');
     }
+    sadPet(){
+        this.scene.hearts.removeHeart();
+        this.play('puppy_sad')
+    }
     idle(){
         this.play('puppy_stand');
     }
@@ -95,10 +99,7 @@ class LayDownState extends State {
         scene.time.delayedCall(puppy.layDownTime, () => {
             puppy.layingDown = false;
             if (puppy.tickled == false) {
-                scene.hearts.removeHeart();
-                console.log(scene.hearts.totalHearts());
-                console.log('REMOVE HEART')
-                puppy.play('puppy_sad')
+                puppy.sadPet();
             }
             scene.time.delayedCall(1000, () => {
                 puppy.tickled = false;
