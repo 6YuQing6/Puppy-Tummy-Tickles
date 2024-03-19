@@ -1,5 +1,5 @@
 class Hearts {
-    constructor(scene, x, y, startingHearts = 3, maxHearts = 6){
+    constructor(scene, x, y, startingHearts = 2, maxHearts = 6){
         this.scene = scene;
         this.startX = x;
         this.startY = y;
@@ -16,7 +16,6 @@ class Hearts {
         for (let i = 0; i < this.startingHearts; i++) {
             this.addFullHeart();
         }
-        hearts = 0;
     }
     addEmptyHeart(){
         if (this.currentHearts <= this.maxHearts) {
@@ -37,7 +36,6 @@ class Hearts {
             let heart = this.heartArray[this.life];
             heart.play('heartPLUS');
             this.life += 1;
-            hearts += 1;
             this.increaseSFX.play();
         }
     }

@@ -3,7 +3,7 @@ class Puppy extends Phaser.Physics.Arcade.Sprite {
         super(scene, x, y, 'puppy');
         this.scene.add.existing(this);
         this.scene.physics.add.existing(this);
-        this.body.setSize(this.width/5, this.height/10);
+        this.body.setSize(this.width/5 + 3, this.height/10);
         this.body.setOffset(15,35);
         this.body.onOverlap = true;
         this.setCollideWorldBounds(true);
@@ -101,16 +101,19 @@ class LayDownState extends State {
     enter(scene, puppy){
         puppy.play('puppy_layDown');
         puppy.layingDown = true;
-        scene.time.delayedCall(puppy.layDownTime, () => {
+        scene.clock = scene.time.delayedCall(puppy.layDownTime, () => {
             puppy.layingDown = false;
             if (puppy.tickled == false) {
                 puppy.sadPet();
             }
-            scene.time.delayedCall(1000, () => {
+            scene.time.delayedCall(600, () => {
                 puppy.tickled = false;
                 this.stateMachine.transition('stand');
                 return;
             });
         })
+    }
+    execute(scene, puppy){
+        scene.timer.setText(`${scene.clock.getRemainingSeconds().toFixed(3)}`);
     }
 }

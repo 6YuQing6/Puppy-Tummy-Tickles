@@ -6,10 +6,15 @@ class Hand extends Phaser.Physics.Arcade.Sprite {
         this.body.setSize(this.width / 8, this.height / 3);
         this.body.onOverlap = true;
         this.body.setOffset(29,30);
+        this.body.collideWorldBounds = true;
+        this.setBounce(1);
         //this.setCollideWorldBounds(true);
 
         this.moving = false;
         this.moveLength = 5;
+        this.handVelocity = 200;
+        this.ACCELERATION = 125;
+        this.DRAG = 45;
 
         this.moveSFX = scene.sound.add('handMove', {volume: 0.1});
 
@@ -39,6 +44,15 @@ class IdleState extends State {
 class MoveState extends State {
     execute(scene, hand){
         const {left, right, down} = scene.keys
+        if (left.isDown) {
+            hand.body.setAccelerationX(-hand.ACCELERATION);
+        } else if (right.isDown) {
+            hand.body.setAccelerationX(hand.ACCELERATION);
+        } else {
+            hand.body.setAccelerationX(0)
+            hand.body.setDragX(hand.DRAG)
+        }
+        /*
         if(left.isDown && !hand.moving && hand.x > 0) {
             hand.x -= hand.moveLength;
             hand.moving = true;
@@ -57,7 +71,10 @@ class MoveState extends State {
                 //console.log(hand.x)
             });
         } 
+        */
         if (Phaser.Input.Keyboard.JustDown(down) && !hand.moving) {
+            hand.setVelocity(0);
+            hand.setAccelerationX(0);
             this.stateMachine.transition('drop');
             return
         }

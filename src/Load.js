@@ -39,6 +39,7 @@ class Load extends Phaser.Scene {
         this.load.audio('select','sounds/select.wav');
         this.load.audio('lose', 'sounds/Jingle_Lose_00.mp3');
         this.load.audio('pop','sounds/pop-39222.mp3');
+        this.load.audio('explosion', 'sounds/explosion(1).wav');
 
         // loads fonts
         // https://www.dafont.com/pixelmix.font
@@ -72,11 +73,24 @@ class Load extends Phaser.Scene {
             frameWidth: 23,
             frameHeight: 22,
         });
-
+        this.load.spritesheet('explosion', 'explosion-Sheet.png', {
+            frameWidth: 263,
+            frameHeight: 247,
+        })
         // load sound https://opengameart.org/content/8-bit-sound-effects-library
         // https://opengameart.org/content/dog-sounds 
     }
     create(){
+        // explosion animation
+        this.anims.create({
+            key: 'explosion',
+            frameRate: 5,
+            repeat: 0,
+            frames: this.anims.generateFrameNumbers('explosion', {
+                start: 0,
+                end: 5
+            })
+        })
         // menu animation
         this.anims.create({
             key: 'menu_blink',
