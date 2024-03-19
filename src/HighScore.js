@@ -1,6 +1,6 @@
 class Highscore extends Phaser.Scene {
   constructor() {
-      super('highscoreScene');
+      super('highscoreScene'); 
   }
   create(){
       this.bgm = this.sound.add('bgm2', {volume: 0.2});
