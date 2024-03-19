@@ -32,6 +32,9 @@ class Puppy extends Phaser.Physics.Arcade.Sprite {
     idle(){
         this.play('puppy_stand');
     }
+    walk(){
+        this.play('puppy_walk');
+    }
     moveTo(x){
         if (!(x + 5 > this.x && this.x > x - 5)){
             if (this.x < x && !this.moving){
@@ -72,14 +75,16 @@ class Puppy extends Phaser.Physics.Arcade.Sprite {
 class StandState extends State {
     enter(scene, puppy){
         puppy.idle();
-        this.stateMachine.transition('walk');
-        return;
+        scene.time.delayedCall(1500, () => {
+            this.stateMachine.transition('walk');
+            return;
+        });
     }
 }
 
 class WalkState extends State {
     enter(scene, puppy){
-        puppy.idle();
+        puppy.walk();
         console.log('walking')
         puppy.moveToX = Phaser.Math.Between(20,160);
         console.log(puppy.moveToX);

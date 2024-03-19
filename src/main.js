@@ -1,6 +1,6 @@
 // Name: Sunny Han
-// Date:
-// Hours: 
+// Date: 3/18/2024
+// Hours: 25
 
 'use strict';
 
@@ -19,13 +19,16 @@ let config = {
             debug: true
         }
     },
-    scene: [Load, Menu, Play]
+    scene: [Load, Menu, Instructions, Play, Highscore, Credits]
 }
 
 
 let game = new Phaser.Game(config)
 
 let { width, height } = game.config
+
+let hearts = 0;
+let flowers = 0;
 
 const centerY = game.config.height / 2;
 

@@ -2,36 +2,43 @@ class Play extends Phaser.Scene {
     constructor() {
         super('playScene');
     }
-    init() {
-        this.playing = false
-    }
     create() {
+        this.playing = true
         this.background = this.add.image(0,0,'background').setOrigin(0,0);
-        SPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        // adds objects to scene
         this.puppy = new Puppy(this, 60, 110); 
         this.puppy.setDepth(100);
         this.hand = new Hand(this, 100, 50);
         this.hand.setDepth(101);
-        this.hearts = new Hearts(this, 12, 12, 3);
+        this.hearts = new Hearts(this, 12, 12, 1);
         this.hearts.initialize();
         this.bigheart = this.add.sprite(0,0,'bigheart',0).setVisible(false);
+
+        // adds sounds to scene
         this.barkSFX = this.sound.add('puppyBark', {volume: 2});
         this.bgm = this.sound.add('bgm1', {volume: 0.2});
         this.bgm.play();
+        this.lose = this.sound.add('lose', {volume: 0.5});
+        this.pop = this.sound.add('pop');
+
+        // adds enemy flowers to scene
         this.flower = new Flower(this, 100, 110);
         this.flowergroup = this.add.group({
             runChildUpdate: true
         });
         this.flowergroup.add(this.flower);
-
+        
+        // creates controls
         this.keys = this.input.keyboard.createCursorKeys();
+        this.esc = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
         // adds flower creator
         this.time.addEvent({
             delay: this.flower.spawnRate,
             callback: () => {
                 let randomX = Phaser.Math.Between(this.flower.width, width-this.flower.width);
-                while (this.puppy.x + 20 > randomX && randomX > this.puppy.x - 20){
+                while (this.puppy.x + 25 > randomX && randomX > this.puppy.x - 25){
                     randomX = Phaser.Math.Between(this.flower.width, width-this.flower.width);
                 } // x + 5 > this.x && this.x > x - 5
                 let flower = new Flower(this, randomX, 110);
@@ -55,12 +62,26 @@ class Play extends Phaser.Scene {
 
     }
     update() {
+        if (this.hearts.life == 0 && this.playing){
+            this.playing == false;
+            this.time.delayedCall(1500, () => {
+                this.lose.play();
+                this.bgm.stop();
+                this.scene.start('highscoreScene');
+            });
+        }
+        if (Phaser.Input.Keyboard.JustDown(this.esc)) {
+            this.bgm.stop();
+            this.scene.start('menuScene');
+        }
         this.handFSM.step();
         this.puppyFSM.step();
 
         // // adds event checker for overlap
         this.physics.overlap(this.hand, this.flowergroup, (hand, flower)=>{
             flower.destroy();
+            flowers += 1;
+            this.pop.play();
         });
 
         this.physics.overlap(this.puppy,this.flowergroup, (puppy, flower)=>{
