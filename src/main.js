@@ -1,6 +1,10 @@
 // Name: Sunny Han
 // Date: 3/18/2024
-// Hours: 25
+// Hours: 30
+// Notes: In game restart is ESC key
+// Code Sources: Nathan Altice - Load screen, State Machine
+// Asset sources are linked in Load.js above each asset
+// Phaser Components Used: Tween, BitMapFont, Animation, Timer, Physic System
 
 'use strict';
 
